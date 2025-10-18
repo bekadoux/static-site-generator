@@ -16,7 +16,7 @@ class HTMLNode:
 
     def to_html(self):
         # Child classes should override this
-        raise NotImplementedError
+        raise NotImplementedError("this method is not implemented")
 
     def props_to_html(self):
         final_str = ""
