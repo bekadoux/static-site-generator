@@ -3,7 +3,7 @@ from htmlnode import LeafNode
 
 
 class TextType(Enum):
-    PLAIN = "plain"
+    PLAIN = "plaintext"
     BOLD = "bold"
     ITALIC = "italic"
     CODE = "code"
