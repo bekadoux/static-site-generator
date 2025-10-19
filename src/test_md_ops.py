@@ -1,6 +1,10 @@
 import unittest
 
-from md_ops import split_nodes_delimiter
+from md_ops import (
+    split_nodes_delimiter,
+    extract_markdown_images,
+    extract_markdown_links,
+)
 from textnode import TextNode, TextType
 
 
@@ -70,4 +74,53 @@ class TestMarkdownOperations(unittest.TestCase):
                 TextNode("italic", TextType.ITALIC),
                 TextNode(" word", TextType.PLAIN),
             ],
+        )
+
+    def test_extract_markdown_images(self):
+        matches = extract_markdown_images(
+            "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png)"
+        )
+        self.assertListEqual([("image", "https://i.imgur.com/zjjcJKZ.png")], matches)
+
+        matches = extract_markdown_images(
+            "This is text with two ![image 1](https://i.imgur.com/zjjcJKZ.png) pics: ![image 2](https://i.imgur.com/zjjcJKZ.png)"
+        )
+        self.assertListEqual(
+            [
+                ("image 1", "https://i.imgur.com/zjjcJKZ.png"),
+                ("image 2", "https://i.imgur.com/zjjcJKZ.png"),
+            ],
+            matches,
+        )
+
+        matches = extract_markdown_images("This is text with no images")
+        self.assertListEqual(
+            [],
+            matches,
+        )
+
+    def test_extract_markdown_links(self):
+        matches = extract_markdown_links(
+            "This is text with a [link](https://example.com)"
+        )
+        self.assertListEqual(
+            [("link", "https://example.com")],
+            matches,
+        )
+
+        matches = extract_markdown_links(
+            "This is text with two links [link](https://example.com) [link 2](https://example.com)"
+        )
+        self.assertListEqual(
+            [
+                ("link", "https://example.com"),
+                ("link 2", "https://example.com"),
+            ],
+            matches,
+        )
+
+        matches = extract_markdown_links("This is text with no links")
+        self.assertListEqual(
+            [],
+            matches,
         )
