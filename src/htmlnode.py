@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from typing import Self
 
 
@@ -6,7 +7,7 @@ class HTMLNode:
         self,
         tag: str | None = None,
         value: str | None = None,
-        children: list[Self] | None = None,
+        children: Sequence[Self] | None = None,
         props: dict | None = None,
     ):
         self.tag = tag
@@ -35,3 +36,46 @@ class HTMLNode:
             )
 
         return repr_str
+
+
+class ParentNode(HTMLNode):
+    def __init__(
+        self,
+        tag: str,
+        children: Sequence[HTMLNode],
+        props: dict | None = None,
+    ):
+        self.tag = tag
+        self.children = children
+        self.props = props
+
+    def to_html(self):
+        if len(self.tag) == 0:
+            raise ValueError(
+                "attribute 'tag' cannot be empty for instances of ParentNode"
+            )
+        if len(self.children) == 0:
+            raise ValueError(
+                "attribute 'children' cannot be empty for instances of ParentNode"
+            )
+
+        children_html = "".join(child.to_html() for child in self.children)
+        html_render = f"<{self.tag}{self.props_to_html()}>{children_html}</{self.tag}>"
+        return html_render
+
+
+class LeafNode(HTMLNode):
+    def __init__(
+        self,
+        tag: str | None,
+        value: str,
+        props: dict | None = None,
+    ):
+        super().__init__(tag, value, props=props)
+
+    def to_html(self):
+        if self.tag is None:
+            return self.value
+
+        html_render = f"<{self.tag}{self.props_to_html()}>{self.value}</{self.tag}>"
+        return html_render
