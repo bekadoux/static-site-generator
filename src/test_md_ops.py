@@ -2,6 +2,8 @@ import unittest
 
 from md_ops import (
     split_nodes_delimiter,
+    split_nodes_image,
+    split_nodes_link,
     extract_markdown_images,
     extract_markdown_links,
 )
@@ -123,4 +125,59 @@ class TestMarkdownOperations(unittest.TestCase):
         self.assertListEqual(
             [],
             matches,
+        )
+
+    def test_split_nodes_image(self):
+        node = TextNode(
+            "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png) and another ![second image](https://i.imgur.com/3elNhQu.png)",
+            TextType.PLAIN,
+        )
+        new_nodes = split_nodes_image([node])
+        self.assertListEqual(
+            [
+                TextNode("This is text with an ", TextType.PLAIN),
+                TextNode("image", TextType.IMAGE, "https://i.imgur.com/zjjcJKZ.png"),
+                TextNode(" and another ", TextType.PLAIN),
+                TextNode(
+                    "second image", TextType.IMAGE, "https://i.imgur.com/3elNhQu.png"
+                ),
+            ],
+            new_nodes,
+        )
+
+        node = TextNode(
+            "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png) and a link [link](https://i.imgur.com/3elNhQu.png)",
+            TextType.PLAIN,
+        )
+        new_nodes = split_nodes_image([node])
+        self.assertListEqual(
+            [
+                TextNode("This is text with an ", TextType.PLAIN),
+                TextNode("image", TextType.IMAGE, "https://i.imgur.com/zjjcJKZ.png"),
+                TextNode(
+                    " and a link [link](https://i.imgur.com/3elNhQu.png)",
+                    TextType.PLAIN,
+                ),
+            ],
+            new_nodes,
+        )
+
+        node = TextNode(
+            "This is text with three ![image](https://i.imgur.com/zjjcJKZ.png) images ![image](https://i.imgur.com/zjjcJKZ.png) yes ![image](https://i.imgur.com/zjjcJKZ.png)",
+            TextType.PLAIN,
+        )
+        new_nodes = split_nodes_image([node])
+        self.assertListEqual(
+            [
+                TextNode("This is text with three ", TextType.PLAIN),
+                TextNode("image", TextType.IMAGE, "https://i.imgur.com/zjjcJKZ.png"),
+                TextNode(" images ", TextType.PLAIN),
+                TextNode("image", TextType.IMAGE, "https://i.imgur.com/zjjcJKZ.png"),
+                TextNode(
+                    " yes ",
+                    TextType.PLAIN,
+                ),
+                TextNode("image", TextType.IMAGE, "https://i.imgur.com/zjjcJKZ.png"),
+            ],
+            new_nodes,
         )
