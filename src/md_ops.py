@@ -38,7 +38,7 @@ def split_nodes_delimiter(
     return new_nodes
 
 
-def split_nodes_image(old_nodes: list[TextNode]):
+def split_nodes_image(old_nodes: list[TextNode]) -> list[TextNode]:
     new_nodes = []
     for node in old_nodes:
         if node.text_type != TextType.PLAIN:
@@ -61,7 +61,7 @@ def split_nodes_image(old_nodes: list[TextNode]):
     return new_nodes
 
 
-def split_nodes_link(old_nodes: list[TextNode]):
+def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
     new_nodes = []
     for node in old_nodes:
         if node.text_type != TextType.PLAIN:
@@ -82,3 +82,19 @@ def split_nodes_link(old_nodes: list[TextNode]):
                 new_nodes.append(TextNode(anchor, TextType.LINK, url))
                 match_index += 1
     return new_nodes
+
+
+def text_to_textnodes(text: str) -> list[TextNode]:
+    delimiters = [
+        ("**", TextType.BOLD),
+        ("*", TextType.ITALIC),
+        ("_", TextType.ITALIC),
+        ("`", TextType.CODE),
+    ]
+
+    nodes = [TextNode(text, TextType.PLAIN)]
+    for delim, text_type in delimiters:
+        nodes = split_nodes_delimiter(nodes, delim, text_type)
+    nodes = split_nodes_image(nodes)
+    nodes = split_nodes_link(nodes)
+    return nodes

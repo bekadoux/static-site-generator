@@ -4,6 +4,7 @@ from md_ops import (
     split_nodes_delimiter,
     split_nodes_image,
     split_nodes_link,
+    text_to_textnodes,
     extract_markdown_images,
     extract_markdown_links,
 )
@@ -227,6 +228,84 @@ class TestMarkdownOperations(unittest.TestCase):
                     "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png) and another ![second image](https://i.imgur.com/3elNhQu.png)",
                     TextType.PLAIN,
                 ),
+            ],
+            new_nodes,
+        )
+
+    def test_text_to_textnodes(self):
+        new_nodes = text_to_textnodes(
+            "This is **text** with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+        )
+        self.assertListEqual(
+            [
+                TextNode("This is ", TextType.PLAIN),
+                TextNode("text", TextType.BOLD),
+                TextNode(" with an ", TextType.PLAIN),
+                TextNode("italic", TextType.ITALIC),
+                TextNode(" word and a ", TextType.PLAIN),
+                TextNode("code block", TextType.CODE),
+                TextNode(" and an ", TextType.PLAIN),
+                TextNode(
+                    "obi wan image", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg"
+                ),
+                TextNode(" and a ", TextType.PLAIN),
+                TextNode("link", TextType.LINK, "https://boot.dev"),
+            ],
+            new_nodes,
+        )
+
+        new_nodes = text_to_textnodes("*This is italic text*")
+        self.assertListEqual(
+            [TextNode("This is italic text", TextType.ITALIC)],
+            new_nodes,
+        )
+
+        new_nodes = text_to_textnodes("**This is bold text**")
+        self.assertListEqual(
+            [TextNode("This is bold text", TextType.BOLD)],
+            new_nodes,
+        )
+
+        new_nodes = text_to_textnodes("_This is different italic text_")
+        self.assertListEqual(
+            [TextNode("This is different italic text", TextType.ITALIC)],
+            new_nodes,
+        )
+
+        new_nodes = text_to_textnodes("This is text with a `code` block")
+        self.assertListEqual(
+            [
+                TextNode("This is text with a ", TextType.PLAIN),
+                TextNode("code", TextType.CODE),
+                TextNode(" block", TextType.PLAIN),
+            ],
+            new_nodes,
+        )
+
+        new_nodes = text_to_textnodes(
+            "![all of this is an image](https://i.imgur.com/fJRm4Vk.jpeg)"
+        )
+        self.assertListEqual(
+            [
+                TextNode(
+                    "all of this is an image",
+                    TextType.IMAGE,
+                    "https://i.imgur.com/fJRm4Vk.jpeg",
+                )
+            ],
+            new_nodes,
+        )
+
+        new_nodes = text_to_textnodes(
+            "[all of this is a link](https://i.imgur.com/fJRm4Vk.jpeg)"
+        )
+        self.assertListEqual(
+            [
+                TextNode(
+                    "all of this is a link",
+                    TextType.LINK,
+                    "https://i.imgur.com/fJRm4Vk.jpeg",
+                )
             ],
             new_nodes,
         )
