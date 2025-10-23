@@ -1,6 +1,6 @@
 import unittest
 
-from md_ops import (
+from inline_md import (
     split_nodes_delimiter,
     split_nodes_image,
     split_nodes_link,
@@ -11,7 +11,7 @@ from md_ops import (
 from textnode import TextNode, TextType
 
 
-class TestMarkdownOperations(unittest.TestCase):
+class TestInlineMarkdownOperations(unittest.TestCase):
     def test_correct_split(self):
         node = TextNode("This is text with a `code block` word", TextType.PLAIN)
         new_nodes = split_nodes_delimiter([node], "`", TextType.CODE)
