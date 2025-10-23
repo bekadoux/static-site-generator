@@ -1,6 +1,6 @@
 import unittest
 
-from block_md import markdown_to_blocks
+from block_md import BlockType, block_to_block_type, markdown_to_blocks
 
 
 class TestBlockMarkdownOperations(unittest.TestCase):
@@ -49,3 +49,28 @@ This is the same paragraph on a new line
                 "- This is a list\n- with items",
             ],
         )
+
+    def test_block_to_block_type(self):
+        block = "paragraph of text"
+        self.assertEqual(block_to_block_type(block), BlockType.PARAGRAPH)
+
+        block = "```code block here```"
+        self.assertEqual(block_to_block_type(block), BlockType.CODE)
+
+        block = ">quote\n>other quote\n> some other quote\n"
+        self.assertEqual(block_to_block_type(block), BlockType.QUOTE)
+
+        block = "- milk\n- honey\n- cookies"
+        self.assertEqual(block_to_block_type(block), BlockType.ULIST)
+
+        block = "- milk\n-honey\n- cookies"
+        self.assertEqual(block_to_block_type(block), BlockType.PARAGRAPH)
+
+        block = "1. one\n2. two\n3. three"
+        self.assertEqual(block_to_block_type(block), BlockType.OLIST)
+
+        block = "1. one\n2. two\n5. five"
+        self.assertEqual(block_to_block_type(block), BlockType.PARAGRAPH)
+
+        block = "1. one\n2. two\n5 five"
+        self.assertEqual(block_to_block_type(block), BlockType.PARAGRAPH)
