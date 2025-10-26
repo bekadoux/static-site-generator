@@ -1,5 +1,4 @@
-from collections.abc import Sequence
-from typing import Self
+from typing import Self, Sequence
 
 
 class HTMLNode:
@@ -45,12 +44,11 @@ class ParentNode(HTMLNode):
         children: Sequence[HTMLNode],
         props: dict | None = None,
     ):
-        self.tag = tag
+        super().__init__(tag, None, props=props)
         self.children = children
-        self.props = props
 
     def to_html(self):
-        if len(self.tag) == 0:
+        if self.tag is not None and len(self.tag) == 0:
             raise ValueError(
                 "attribute 'tag' cannot be empty for instances of ParentNode"
             )
@@ -62,6 +60,14 @@ class ParentNode(HTMLNode):
         children_html = "".join(child.to_html() for child in self.children)
         html_render = f"<{self.tag}{self.props_to_html()}>{children_html}</{self.tag}>"
         return html_render
+
+    def __repr__(self) -> str:
+        repr_str = f"ParentNode({self.tag}, {self.value}, props={self.props})"
+        repr_str += (
+            f"\nChildren:\n{'\n'.join('  ' + str(node) for node in self.children)}"
+        )
+
+        return repr_str
 
 
 class LeafNode(HTMLNode):
@@ -79,3 +85,6 @@ class LeafNode(HTMLNode):
 
         html_render = f"<{self.tag}{self.props_to_html()}>{self.value}</{self.tag}>"
         return html_render
+
+    def __repr__(self) -> str:
+        return f"LeafNode({self.tag}, {self.value}, props={self.props})"
