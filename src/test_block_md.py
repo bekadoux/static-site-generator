@@ -3,6 +3,7 @@ import unittest
 from block_md import (
     BlockType,
     block_to_block_type,
+    extract_title,
     markdown_to_blocks,
     markdown_to_html_node,
 )
@@ -142,3 +143,39 @@ should do nothing about it
             html,
             "<div><h1>header 1</h1><h3>header three okay</h3><p>okay let's type something should work fine hehe</p><blockquote>quote here this is quote this is quote too</blockquote><ul><li>milk</li><li>sugar</li><li>candies</li></ul><ol><li>papapapapa</li><li>bababababa</li><li>yeah</li></ol><pre><code>gotta throw some `code` here too\nshould do nothing about it\n</code></pre></div>",
         )
+
+    def test_extract_title(self):
+        md = """
+# heading here
+
+some other paragraph
+
+- list
+- milk
+- candies
+        """
+        title = extract_title(md)
+        self.assertEqual(title, "heading here")
+
+        md = """
+some other paragraph
+
+### less important stuff
+
+#   puppies and unicorns  
+
+- list
+- milk
+- candies
+        """
+        title = extract_title(md)
+        self.assertEqual(title, "puppies and unicorns")
+
+        md = """
+## not a heading
+- list
+- milk
+- candies
+        """
+        with self.assertRaises(Exception):
+            extract_title(md)

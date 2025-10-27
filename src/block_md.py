@@ -137,3 +137,10 @@ def ol_to_html_node(block: str) -> HTMLNode:
 def paragraph_to_html_node(block: str) -> HTMLNode:
     block_text = " ".join(block.splitlines())
     return ParentNode("p", text_to_children(block_text))
+
+
+def extract_title(markdown: str) -> str:
+    for line in markdown.splitlines():
+        if line.startswith("# "):
+            return line.lstrip("# ").strip()
+    raise Exception("title line not found in document")
