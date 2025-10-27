@@ -39,3 +39,14 @@ def remove_dir(dst: str) -> None:
 
     logging.info(f"Removing: {dst}")
     shutil.rmtree(dst)
+
+
+def write_content(dst: str, content: str) -> None:
+    parent = os.path.dirname(dst)
+    os.makedirs(parent, exist_ok=True)
+
+    try:
+        with open(dst, "w", encoding="utf-8") as f:
+            f.write(content)
+    except OSError as e:
+        raise OSError(f"could not write to {dst}: {e}") from e
