@@ -42,7 +42,7 @@ def generate_page(
     full_html = template_content.replace("{{ Title }}", title)
     full_html = full_html.replace("{{ Content }}", html_from_md)
 
-    full_html.replace('href="/', f'href="{basepath}')
-    full_html.replace('src="/', f'src="{basepath}')
+    full_html = full_html.replace('href="/', f'href="{basepath}')
+    full_html = full_html.replace('src="/', f'src="{basepath}')
 
     write_content(dest_path, full_html)
