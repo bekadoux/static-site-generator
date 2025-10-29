@@ -31,10 +31,10 @@ def generate_page(from_path: str, template_path: str, dest_path: str) -> None:
     except OSError as e:
         raise OSError(f"could not read files: {e}") from e
 
-    html_from_md = markdown_to_html_node(md_content).to_html()
     title = extract_title(md_content)
+    html_from_md = markdown_to_html_node(md_content).to_html()
 
     full_html = template_content.replace("{{ Title }}", title)
-    full_html = template_content.replace("{{ Content }}", html_from_md)
+    full_html = full_html.replace("{{ Content }}", html_from_md)
 
     write_content(dest_path, full_html)
