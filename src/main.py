@@ -1,10 +1,15 @@
 from fileops import clean_copy
-from generator import generate_page
+from generator import generate_pages_recursive
+
+STATIC_PATH = "./static"
+PUBLIC_PATH = "./public"
+CONTENT_PATH = "./content"
+TEMPLATE_PATH = "./template.html"
 
 
 def main():
-    clean_copy("./static", "./public")
-    generate_page("./content/index.md", "./template.html", "./public/index.html")
+    clean_copy(STATIC_PATH, PUBLIC_PATH)
+    generate_pages_recursive(CONTENT_PATH, TEMPLATE_PATH, PUBLIC_PATH)
 
 
 if __name__ == "__main__":

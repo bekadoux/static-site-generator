@@ -1,5 +1,23 @@
+import os
 from block_md import extract_title, markdown_to_html_node
 from fileops import write_content
+
+
+def generate_pages_recursive(
+    dir_path_content: str, template_path: str, dest_dir_path: str
+) -> None:
+    for content in os.listdir(dir_path_content):
+        content_path = os.path.join(dir_path_content, content)
+        new_dest_dir_path = os.path.join(dest_dir_path, content)
+        if os.path.isdir(content_path):
+            generate_pages_recursive(content_path, template_path, new_dest_dir_path)
+        elif os.path.isfile(content_path) and content.endswith(".md"):
+            html_file_name = content.replace(".md", ".html")
+            generate_page(
+                content_path,
+                template_path,
+                os.path.join(dest_dir_path, html_file_name),
+            )
 
 
 def generate_page(from_path: str, template_path: str, dest_path: str) -> None:
